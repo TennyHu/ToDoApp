@@ -1,5 +1,6 @@
 package com.app.todoapp.controller;
 
+import com.app.todoapp.models.Priority;
 import com.app.todoapp.models.Task;
 import com.app.todoapp.services.TaskService;
 import org.springframework.http.ResponseEntity;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -26,8 +28,8 @@ public class TaskController {
     }
 
     @PostMapping
-    public String createTask(@RequestParam String title) {
-        taskService.createTask(title);
+    public String createTask(@RequestParam String title, @RequestParam Priority priority, LocalDateTime deadline) {
+        taskService.createTask(title, priority, deadline);
         return "redirect:/todotasks";
     }
 

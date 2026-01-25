@@ -1,9 +1,11 @@
 package com.app.todoapp.services;
 
+import com.app.todoapp.models.Priority;
 import com.app.todoapp.models.Task;
 import com.app.todoapp.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -18,10 +20,16 @@ public class TaskService {
         return taskRepository.findAll();
     }
 
-    public void createTask(String title) {
+    public void createTask(String title, Priority priority, LocalDateTime deadline) {
         Task task = new Task();
         task.setTitle(title);
         task.setCompleted(false);
+
+        if (priority == null) {
+            priority = Priority.LOW;
+        }
+        task.setPriority(priority);
+        task.setDeadline(null);
         taskRepository.save(task);
     }
 
@@ -35,4 +43,5 @@ public class TaskService {
         task.setCompleted(!task.isCompleted());
         taskRepository.save(task);
     }
+
 }
