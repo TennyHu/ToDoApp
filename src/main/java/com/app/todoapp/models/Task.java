@@ -3,7 +3,7 @@ package com.app.todoapp.models;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -13,7 +13,7 @@ public class Task {
     private Long id;
     private String title;
     private boolean completed;
-    private LocalDateTime deadline;
+    private LocalDate deadline;
 
     @Enumerated(EnumType.STRING)
     private Priority priority = Priority.LOW;       // by default, low priority level
