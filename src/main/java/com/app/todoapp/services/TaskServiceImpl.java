@@ -38,12 +38,12 @@ public class TaskServiceImpl implements TaskService {
 
         // no cache, search database
         System.out.println("Accessing tasks from database");
-        List<Task> tasks = taskRepository.findAll();
+        List<Task> taskList = taskRepository.findAll();
 
         // write in cache, limit 5min
-        redisTemplate.opsForValue().set(TASK_CACHE_KEY, tasks, 5, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(TASK_CACHE_KEY, taskList, 5, TimeUnit.MINUTES);
 
-        return tasks;
+        return taskList;
     }
 
     @Override
@@ -82,7 +82,7 @@ public class TaskServiceImpl implements TaskService {
 
         Task savedTask = taskRepository.save(task);
 
-        // clear the list cache
+        // clean related cache
         redisTemplate.delete(TASK_CACHE_KEY);
 
         return savedTask;
@@ -91,14 +91,29 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void deleteTask(Long id) {
         taskRepository.deleteById(id);
+
+        // clean related cache
+        redisTemplate.delete(TASK_CACHE_PREFIX + id);
+        redisTemplate.delete(TASK_CACHE_PREFIX + id);
+
     }
 
     @Override
     public void toggleTask(Long id) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Task not found"));
-        task.setCompleted(!task.isCompleted());
-        taskRepository.save(task);
+
+        if (task != null) {
+            task.setCompleted(!task.isCompleted());
+            taskRepository.save(task);
+
+            // clean related cache
+            redisTemplate.delete(TASK_CACHE_PREFIX + id);
+            redisTemplate.delete(TASK_CACHE_KEY);
+        }
+
+
+
     }
 
 
