@@ -3,15 +3,24 @@ package com.app.todoapp.services;
 import com.app.todoapp.models.Priority;
 import com.app.todoapp.models.Task;
 import com.app.todoapp.repository.TaskRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class TaskServiceImpl implements TaskService {
 
+    @Autowired
     private final TaskRepository taskRepository;
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
+    private static final String TASK_CACHE_KEY = "tasks:all";
+    private static final String TASK_CACHE_PREFIX = "task:";
 
     public TaskServiceImpl(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
@@ -19,21 +28,64 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<Task> getAllTasks() {
-        return taskRepository.findAll();
+
+        // check cache
+        List<Task> cachedTasks = (List<Task>) redisTemplate.opsForValue().get(TASK_CACHE_KEY);
+        if (cachedTasks != null) {
+            System.out.println("Accessing tasks from cache");
+            return cachedTasks;
+        }
+
+        // no cache, search database
+        System.out.println("Accessing tasks from database");
+        List<Task> tasks = taskRepository.findAll();
+
+        // write in cache, limit 5min
+        redisTemplate.opsForValue().set(TASK_CACHE_KEY, tasks, 5, TimeUnit.MINUTES);
+
+        return tasks;
     }
 
     @Override
-    public void createTask(String title, Priority priority, LocalDate deadline) {
+    public Task getTaskById(Long id) {
+        String cacheKey = TASK_CACHE_PREFIX + id;
+
+        // check cache
+        Task cacheTask = (Task) redisTemplate.opsForValue().get(cacheKey);
+        if (cacheTask != null) {
+            System.out.println("Accessing task from cache:" + id);
+            return cacheTask;
+        }
+
+        // check database
+        System.out.println("Accessing task from database:" + id);
+        Task task = taskRepository.findById(id).orElseThrow(() -> new RuntimeException("Task not found"));
+
+        // write in chache, limit 10min
+        if (task != null) {
+            redisTemplate.opsForValue().set(TASK_CACHE_PREFIX + id, task, 10, TimeUnit.MINUTES);
+        }
+
+        return task;
+    }
+
+    @Override
+    public Task createTask(String title, Priority priority, LocalDate deadline) {
         Task task = new Task();
         task.setTitle(title);
         task.setCompleted(false);
-
+        task.setPriority(priority);
+        task.setDeadline(deadline);
         if (priority == null) {
             priority = Priority.LOW;
         }
-        task.setPriority(priority);
-        task.setDeadline(deadline);
-        taskRepository.save(task);
+
+        Task savedTask = taskRepository.save(task);
+
+        // clear the list cache
+        redisTemplate.delete(TASK_CACHE_KEY);
+
+        return savedTask;
     }
 
     @Override
@@ -49,9 +101,5 @@ public class TaskServiceImpl implements TaskService {
         taskRepository.save(task);
     }
 
-    @Override
-    public Task getTaskById(Long id) {
-        return taskRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Task not found"));
-    }
+
 }

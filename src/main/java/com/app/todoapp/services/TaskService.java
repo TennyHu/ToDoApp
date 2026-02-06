@@ -9,7 +9,7 @@ import java.util.List;
 public interface TaskService {
     List<Task> getAllTasks();
 
-    void createTask(String title, Priority priority, LocalDate deadline);
+    Task createTask(String title, Priority priority, LocalDate deadline);
 
     void deleteTask(Long id);
 

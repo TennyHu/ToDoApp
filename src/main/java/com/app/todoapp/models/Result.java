@@ -25,3 +25,7 @@ public class Result {
         return new Result(0,msg,null);
     }
 }
+
+
+
+
