@@ -1,9 +1,19 @@
 package com.app.todoapp.services;
 
+import com.app.todoapp.models.PageBean;
 import com.app.todoapp.models.Priority;
 import com.app.todoapp.models.Task;
 import com.app.todoapp.repository.TaskRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.querydsl.QPageRequest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +54,12 @@ public class TaskServiceImpl implements TaskService {
         redisTemplate.opsForValue().set(TASK_CACHE_KEY, taskList, 5, TimeUnit.MINUTES);
 
         return taskList;
+    }
+
+    @Override
+    public Page<Task> getTasksWithPagination(int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
+        return taskRepository.findAll(pageable);
     }
 
     @Override
