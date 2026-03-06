@@ -1,19 +1,13 @@
 package com.app.todoapp.services;
 
-import com.app.todoapp.models.PageBean;
-import com.app.todoapp.models.Priority;
-import com.app.todoapp.models.Task;
-import com.app.todoapp.repository.TaskRepository;
+import com.app.todoapp.entity.Priority;
+import com.app.todoapp.entity.Task;
+import com.app.todoapp.mapper.TaskRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.querydsl.QPageRequest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 

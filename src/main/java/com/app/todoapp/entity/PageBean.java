@@ -1,4 +1,4 @@
-package com.app.todoapp.models;
+package com.app.todoapp.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

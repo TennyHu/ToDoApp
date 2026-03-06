@@ -1,16 +1,12 @@
 package com.app.todoapp.controller;
 
-import com.app.todoapp.models.PageBean;
-import com.app.todoapp.models.Priority;
-import com.app.todoapp.models.Result;
-import com.app.todoapp.models.Task;
+import com.app.todoapp.entity.PageBean;
+import com.app.todoapp.entity.Priority;
+import com.app.todoapp.entity.Result;
+import com.app.todoapp.entity.Task;
 import com.app.todoapp.services.TaskServiceImpl;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
