@@ -1,9 +1,11 @@
 package com.app.todoapp;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
+@MapperScan("com.app.todoapp.mapper")
 public class TodoappApplication {
 
 	public static void main(String[] args) {
