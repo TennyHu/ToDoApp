@@ -7,13 +7,13 @@ import java.time.LocalDateTime;
 
 @Data
 public class ToDo {
-    private int id;
+    private Long id;
     private boolean completed;
     private String title;
     private Priority priority;
     private LocalDate deadline;
-    private int ownerId;
-    private int teamId;
+    private Long ownerId;
+    private Long teamId;
     private LocalDateTime createTime;
 
 }

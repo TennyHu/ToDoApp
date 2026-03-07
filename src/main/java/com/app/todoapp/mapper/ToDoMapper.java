@@ -10,8 +10,8 @@ import java.util.Optional;
 public interface ToDoMapper {
 
     // Retrieve - get all to do
-    @Select("select * from todo")
-    List<ToDo> getAllTodo();
+    @Select("select * from todo where owner_id = #{userId}")
+    List<ToDo> getAllTodo(Long userId);
 
     // Retrieve - get to do by id
     @Select("select * from todo where id = #{id}")

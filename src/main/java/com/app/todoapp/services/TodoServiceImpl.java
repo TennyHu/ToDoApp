@@ -27,7 +27,7 @@ public class TodoServiceImpl implements TodoService {
     private static final String TASK_CACHE_PREFIX = "task:";
 
     @Override
-    public List<ToDo> getAllTodo() {
+    public List<ToDo> getAllTodo(Long userId) {
 
         // check cache
         List<ToDo> cachedTasks = (List<ToDo>) redisTemplate.opsForValue().get(TASK_CACHE_KEY);
@@ -38,7 +38,7 @@ public class TodoServiceImpl implements TodoService {
 
         // no cache, search database
         System.out.println("Accessing todo from database");
-        List<ToDo> taskList = toDoMapper.getAllTodo();
+        List<ToDo> taskList = toDoMapper.getAllTodo(userId);
 
         // write in cache, limit 5min
         redisTemplate.opsForValue().set(TASK_CACHE_KEY, taskList, 5, TimeUnit.MINUTES);
@@ -46,11 +46,6 @@ public class TodoServiceImpl implements TodoService {
         return taskList;
     }
 
-//    @Override
-//    public Page<Task> getTasksWithPagination(int page, int size, String sortBy) {
-//        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
-//        return toDoMapper.getAllTodo(pageable);
-//    }
     @Override
     public List<ToDo> getTodoWithPagination(Long ownerId, String sortBy, int page, int size) {
         int offset = (page - 1) * size;
@@ -61,59 +56,72 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public ToDo getTodoById(Long id) {
+    public ToDo getTodoById(Long id, Long userId) {
         String cacheKey = TASK_CACHE_PREFIX + id;
 
         // check cache
-        ToDo cacheTask = (ToDo) redisTemplate.opsForValue().get(cacheKey);
-        if (cacheTask != null) {
-            System.out.println("Accessing todo from cache:" + id);
-            return cacheTask;
-        }
+//        ToDo cacheTask = (ToDo) redisTemplate.opsForValue().get(cacheKey);
+//        if (cacheTask != null) {
+//            System.out.println("Accessing todo from cache:" + id);
+//            return cacheTask;
+//        }
 
         // check database
         System.out.println("Accessing todo from database:" + id);
         ToDo toDo = toDoMapper.getTodoById(id)
-                .orElseThrow(() -> new RuntimeException("Todo not found"));
+                .orElseThrow(() -> new RuntimeException("未找到待办事项"));
+        if (!toDo.getOwnerId().equals(userId)) {
+            throw new RuntimeException("无权访问");
+        }
 
         // write in chache, limit 10min
-        if (toDo != null) {
-            redisTemplate.opsForValue().set(TASK_CACHE_PREFIX + id, toDo, 10, TimeUnit.MINUTES);
-        }
+//        if (toDo != null) {
+//            redisTemplate.opsForValue().set(TASK_CACHE_PREFIX + id, toDo, 10, TimeUnit.MINUTES);
+//        }
 
         return toDo;
     }
 
     @Override
-    public ToDo createTodo(ToDo toDo) {
+    public ToDo createTodo(ToDo toDo, Long userId) {
+        toDo.setOwnerId(userId);
         toDoMapper.createTodo(toDo);
 
         // clean related cache
-        redisTemplate.delete(TASK_CACHE_KEY);
+//        redisTemplate.delete(TASK_CACHE_KEY);
 
         return toDo;
     }
 
     @Override
-    public void deleteTodo(Long id) {
+    public void deleteTodo(Long id, Long userId) {
+        ToDo toDo = toDoMapper.getTodoById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Todo not found"));
+        if (!toDo.getOwnerId().equals(userId)) {
+            throw new RuntimeException("无权访问");
+        }
+
         toDoMapper.deleteTodo(id);
 
         // clean related cache
-        redisTemplate.delete(TASK_CACHE_PREFIX + id);
-        redisTemplate.delete(TASK_CACHE_KEY);
+//        redisTemplate.delete(TASK_CACHE_PREFIX + id);
+//        redisTemplate.delete(TASK_CACHE_KEY);
     }
 
     @Override
-    public void toggleTodo(Long id) {
+    public void toggleTodo(Long id, Long userId) {
         ToDo toDo = toDoMapper.getTodoById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Todo not found"));
+        if (!toDo.getOwnerId().equals(userId)) {
+            throw new RuntimeException("无权访问");
+        }
 
         if (toDo != null) {
             toDoMapper.toggleTodo(id);
 
             // clean related cache
-            redisTemplate.delete(TASK_CACHE_PREFIX + id);
-            redisTemplate.delete(TASK_CACHE_KEY);
+//            redisTemplate.delete(TASK_CACHE_PREFIX + id);
+//            redisTemplate.delete(TASK_CACHE_KEY);
         }
 
 

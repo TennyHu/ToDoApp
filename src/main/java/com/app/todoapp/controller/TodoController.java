@@ -2,6 +2,7 @@ package com.app.todoapp.controller;
 
 import com.app.todoapp.entity.*;
 import com.app.todoapp.services.TodoServiceImpl;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,28 +23,21 @@ public class TodoController {
         this.todoServiceImpl = todoServiceImpl;
     }
 
+    private Long getUserId(HttpServletRequest request) {
+        return (Long) request.getAttribute("userId");
+    }
+
     @GetMapping
-    public Result getTasks() {
-        List<ToDo> todos = todoServiceImpl.getAllTodo();
+    public Result getAllTodo(HttpServletRequest request) {
+        Long userId = getUserId(request);
+        List<ToDo> todos = todoServiceImpl.getAllTodo(userId);
         return Result.success(todos);
     }
 
-//    @GetMapping("/page")
-//    public Result getTasksPagination(
-//            @RequestParam(defaultValue = "1") int page, // page start from 1
-//            @RequestParam(defaultValue = "10") int size, // 10 data each page
-//            @RequestParam(defaultValue = "id") String orderBy
-//
-//    ) {
-//        Page<Task> springPage = todoServiceImpl.getTasksWithPagination(page - 1, size, orderBy);
-//        // convert into Page Bean
-//        PageBean<Task> pageBean = new PageBean<>(springPage);
-//        return Result.success(pageBean);
-//    }
-
     @GetMapping("/{id}")
-    public Result getTaskById(@PathVariable Long id){
-        ToDo todo = todoServiceImpl.getTodoById(id);
+    public Result getTodoById(@PathVariable Long id, HttpServletRequest request) {
+        Long userId = getUserId(request);
+        ToDo todo = todoServiceImpl.getTodoById(id, userId);
         return Result.success(todo);
     }
 
@@ -59,20 +53,23 @@ public class TodoController {
     }
 
     @PostMapping
-    public Result createTask(@RequestBody ToDo toDo){
-        todoServiceImpl.createTodo(toDo);
+    public Result createTask(@RequestBody ToDo toDo, HttpServletRequest request){
+        Long userId = getUserId(request);
+        ToDo toDo1 = todoServiceImpl.createTodo(toDo, userId);
+        return Result.success(toDo1);
+    }
+
+    @DeleteMapping("/{id}")
+    public Result deleteTask(@PathVariable Long id, HttpServletRequest request){
+        Long userId = getUserId(request);
+        todoServiceImpl.deleteTodo(id, userId);
         return Result.success();
     }
 
     @PutMapping("/{id}")
-    public Result toggleTask(@PathVariable Long id){
-        todoServiceImpl.toggleTodo(id);
-        return Result.success();
-    }
-
-    @DeleteMapping("/{id}")
-    public Result deleteTask(@PathVariable Long id){
-        todoServiceImpl.deleteTodo(id);
+    public Result toggleTask(@PathVariable Long id, HttpServletRequest request){
+        Long userId = getUserId(request);
+        todoServiceImpl.toggleTodo(id, userId);
         return Result.success();
     }
 
