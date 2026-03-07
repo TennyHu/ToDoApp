@@ -47,6 +47,17 @@ public class TodoController {
         return Result.success(todo);
     }
 
+    @GetMapping("/page")
+    public Result getTodoWithPagination(
+            @RequestParam Long ownerId,
+            @RequestParam(defaultValue = "priority") String sortBy,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        List<ToDo> todos = todoServiceImpl.getTodoWithPagination(ownerId, sortBy, page, size);
+        return Result.success(todos);
+    }
+
     @PostMapping
     public Result createTask(@RequestBody ToDo toDo){
         todoServiceImpl.createTodo(toDo);

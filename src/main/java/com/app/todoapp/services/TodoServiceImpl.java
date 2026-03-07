@@ -51,6 +51,14 @@ public class TodoServiceImpl implements TodoService {
 //        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
 //        return toDoMapper.getAllTodo(pageable);
 //    }
+    @Override
+    public List<ToDo> getTodoWithPagination(Long ownerId, String sortBy, int page, int size) {
+        int offset = (page - 1) * size;
+
+        List<ToDo> toDos = toDoMapper.getTodoWithPagination(ownerId, sortBy, size, offset);
+
+        return toDos;
+    }
 
     @Override
     public ToDo getTodoById(Long id) {

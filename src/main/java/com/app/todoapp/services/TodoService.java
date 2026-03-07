@@ -9,6 +9,8 @@ public interface TodoService {
 
     ToDo getTodoById(Long id);
 
+    List<ToDo> getTodoWithPagination(Long ownerId, String sortBy, int size, int page);
+
     ToDo createTodo(ToDo todo);
 
     void deleteTodo(Long id);
