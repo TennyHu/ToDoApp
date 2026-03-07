@@ -10,5 +10,7 @@ public interface UserService {
 
     public User getUserByUsername(String username);
 
+    public User getUserById(Long userId);
+
     public void updateUser(User user);
 }

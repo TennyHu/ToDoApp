@@ -17,5 +17,4 @@ public interface TodoService {
 
     void toggleTodo(Long id);
 
-//    Page<Task> getTasksWithPagination(int page, int size, String sortBy);
 }

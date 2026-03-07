@@ -4,6 +4,7 @@ package com.app.todoapp.controller;
 import com.app.todoapp.entity.Result;
 import com.app.todoapp.entity.User;
 import com.app.todoapp.services.UserServiceImpl;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,10 +33,16 @@ public class UserController {
         return Result.success(token);
     }
 
-    @GetMapping("/{username}")
-    public User getUserByUsername(@PathVariable String username) {
+    @GetMapping("/username/{username}")
+    private User getUserByUsername(@PathVariable String username) {
         User user = userServiceImpl.getUserByUsername(username);
         return user;
+    }
+
+    @GetMapping("/profile")
+    public User getProfile(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        return userServiceImpl.getUserById(userId);
     }
 
     @PutMapping("/{id}")

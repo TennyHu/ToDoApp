@@ -30,7 +30,7 @@ public class JwtUtil {
 
     // Decrypt token to get userId
     public Long getUserIdFromToken(String token) {
-        Claims claims = Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJwt(token).getBody();
+        Claims claims = Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token).getBody();
 
         return Long.parseLong(claims.getSubject());
     }

@@ -41,7 +41,7 @@ public class UserServiceImpl {
             user.setEmail(email);
             userMapper.register(user);
         } else {
-            throw new RuntimeException("用户已存在！");
+            throw new RuntimeException("用户名已存在已存在");
         }
 
     }
@@ -50,31 +50,31 @@ public class UserServiceImpl {
         // 1. 根据 username 查用户
         User user = getUserByUsername(username);
         if (user == null) {
-            throw new RuntimeException("User not found");
+            throw new RuntimeException("该用户不存在");
         }
 
         if (!passwordEncoder.matches(password, user.getPassword())) {       // 输入的密码 vs 数据库里的
-            throw new RuntimeException("Incorrect password");
+            throw new RuntimeException("密码错误");
         }
 
         return jwtUtil.generateToken(user.getId());
     }
 
     public User getUserByUsername(String username) {
-        User user = userMapper.getUserByUsername(username);
-//        if (user == null) {
-//            throw new RuntimeException("该用户不存在！");
-//        }
-        return user;
+        return userMapper.getUserByUsername(username);
     }
 
+    public User getUserById(Long userId) {
+        return userMapper.getUserById(userId);
+    }
+
+
     public void updateUser(User user) {
-//        if (getUserByUsername(user.getUsername()) == null) {
-//            throw new RuntimeException("用户不存在！");
-//        }
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String encodedPassword = encoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
         userMapper.updateUser(user);
     }
+
+
 }
