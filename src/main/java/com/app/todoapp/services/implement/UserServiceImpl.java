@@ -1,14 +1,12 @@
-package com.app.todoapp.services;
+package com.app.todoapp.services.implement;
 
 import com.app.todoapp.entity.User;
 import com.app.todoapp.mapper.UserMapper;
 import com.app.todoapp.security.JwtUtil;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 
 @Service
 public class UserServiceImpl {

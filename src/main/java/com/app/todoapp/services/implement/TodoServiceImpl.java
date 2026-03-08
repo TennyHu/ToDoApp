@@ -1,12 +1,12 @@
-package com.app.todoapp.services;
+package com.app.todoapp.services.implement;
 
 import com.app.todoapp.entity.ToDo;
 import com.app.todoapp.mapper.ToDoMapper;
+import com.app.todoapp.services.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 

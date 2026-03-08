@@ -2,6 +2,7 @@ package com.app.todoapp.services;
 
 import com.app.todoapp.entity.Team;
 import com.app.todoapp.entity.ToDo;
+import com.app.todoapp.entity.UserTeam;
 
 public interface TeamService {
 
@@ -11,8 +12,8 @@ public interface TeamService {
     public Team getTeamById(Long id);
 
     // 只有admin可以进行操作
-    public void updateTeam(Team team);
+    public void updateTeam(Long teamId, Long userId, Team team);
 
     // 只有admin可以进行操作
-    public void deleteTeam(Team team);
+    public void deleteTeam(Long teamId, Long userId, Team team);
 }

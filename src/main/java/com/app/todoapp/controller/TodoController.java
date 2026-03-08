@@ -1,13 +1,11 @@
 package com.app.todoapp.controller;
 
 import com.app.todoapp.entity.*;
-import com.app.todoapp.services.TodoServiceImpl;
+import com.app.todoapp.services.implement.TodoServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController

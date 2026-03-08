@@ -3,7 +3,7 @@ package com.app.todoapp.controller;
 
 import com.app.todoapp.entity.Result;
 import com.app.todoapp.entity.User;
-import com.app.todoapp.services.UserServiceImpl;
+import com.app.todoapp.services.implement.UserServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
