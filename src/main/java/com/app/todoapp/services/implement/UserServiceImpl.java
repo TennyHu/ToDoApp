@@ -3,49 +3,46 @@ package com.app.todoapp.services.implement;
 import com.app.todoapp.entity.User;
 import com.app.todoapp.mapper.UserMapper;
 import com.app.todoapp.security.JwtUtil;
+import com.app.todoapp.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserServiceImpl {
-    @Autowired
+public class UserServiceImpl implements UserService {
+
     private final UserMapper userMapper;
+    private PasswordEncoder passwordEncoder;
+    private JwtUtil jwtUtil;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;  // 注入接口，不直接 new
-
-    @Autowired
-    private JwtUtil jwtUtil;                  // 注入，不 new
-
-    @Autowired
-    public UserServiceImpl(UserMapper userMapper) {
+    public UserServiceImpl(UserMapper userMapper, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
 
-    //@Override
+    @Override
     public void register(String username, String password, String email) {
-        // 1. 检查用户名是否已存在
-        if (getUserByUsername(username) == null) {
-            // 2. 用 BCryptPasswordEncoder 加密密码
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-            String encodedPassword = encoder.encode(password);          // 存进数据库的密码必须是加密后的
 
-            // 3. INSERT 进数据库
-            User user = new User();
-            user.setUsername(username);
-            user.setPassword(encodedPassword);
-            user.setEmail(email);
+        String encodedPassword = passwordEncoder.encode(password);          // 存进数据库的密码必须是加密后
+
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(encodedPassword);
+        user.setEmail(email);
+        try {
             userMapper.register(user);
-        } else {
-            throw new RuntimeException("用户名已存在已存在");
+        } catch (DuplicateKeyException e) {
+            throw new RuntimeException("用户名已存在");
         }
 
     }
 
+    @Override
     public String login(String username, String password) {
-        // 1. 根据 username 查用户
         User user = getUserByUsername(username);
         if (user == null) {
             throw new RuntimeException("该用户不存在");
@@ -58,18 +55,30 @@ public class UserServiceImpl {
         return jwtUtil.generateToken(user.getId());
     }
 
+    @Override
     public User getUserByUsername(String username) {
-        return userMapper.getUserByUsername(username);
+        User user = userMapper.getUserByUsername(username);
+        if (username == null || user == null) {
+            throw new RuntimeException("该用户不存在");
+        }
+        return user;
     }
 
+    @Override
     public User getUserById(Long userId) {
-        return userMapper.getUserById(userId);
+        User user = userMapper.getUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("该用户不存在");
+        }
+        return user;
     }
 
-
-    public void updateUser(User user) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        String encodedPassword = encoder.encode(user.getPassword());
+    @Override
+    public void updateUser(User user, Long userId) {
+        if (!user.getId().equals(userId)) {
+            throw new RuntimeException("该用户无权修改用户信息");
+        }
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
         userMapper.updateUser(user);
     }

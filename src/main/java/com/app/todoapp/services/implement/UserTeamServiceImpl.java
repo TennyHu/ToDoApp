@@ -51,7 +51,7 @@ public class UserTeamServiceImpl implements UserTeamService {
         userTeamMapper.leaveTeam(teamId, userId);
     }
 
-    // 查看该团队所有成员
+
     @Override
     public List<UserTeam> getTeamUsers(Long teamId) {
         List<UserTeam> list = userTeamMapper.getTeamUsers(teamId);
@@ -61,7 +61,7 @@ public class UserTeamServiceImpl implements UserTeamService {
         return list;
     }
 
-    // 查看该成员加入的所有团队
+
     @Override
     public List<UserTeam> getUserTeams(Long userId) {
         List<UserTeam> list = userTeamMapper.getUserTeams(userId);
@@ -76,8 +76,7 @@ public class UserTeamServiceImpl implements UserTeamService {
         return userTeamMapper.getMember(teamId, userId);
     }
 
-
-    // 修改成员身份 - 仅限admin操作
+    @Override
     public void modifyUserRole(Long teamId, Long userId, Long targetUserId, String role) {
         UserTeam operator = userTeamMapper.getMember(teamId, userId);
 

@@ -12,7 +12,6 @@ import java.util.List;
 @RestController
 public class UserTeamController {
 
-
     private final UserTeamServiceImpl userTeamService;
 
     @Autowired
@@ -47,7 +46,8 @@ public class UserTeamController {
     }
 
     @GetMapping("/user/teams")
-    public List<UserTeam> getUserTeams(@PathVariable Long userId) {
+    public List<UserTeam> getUserTeams(HttpServletRequest request) {
+        Long userId = getUserId(request);
         return userTeamService.getUserTeams(userId);
     }
 

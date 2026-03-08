@@ -1,6 +1,5 @@
-package com.app.todoapp.config;
+package com.app.todoapp.security;
 
-import com.app.todoapp.security.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;

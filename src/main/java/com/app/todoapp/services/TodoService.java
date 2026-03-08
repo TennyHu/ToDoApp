@@ -6,21 +6,30 @@ import java.util.List;
 
 public interface TodoService {
 
-    // 只返回当前用户的all to do
+    // 权限 - 当前用户
+    // 操作 - 当前用户的所有to do
     List<ToDo> getAllTodo(Long userId);
 
-    // 查到后要验证当前to do是否属于当前用户的
+    // 权限 - 当前用户
+    // 操作 - 当前用户指定id的to do
     ToDo getTodoById(Long id, Long userId);
 
+    // 权限 - 当前用户
+    // 操作 - 当前用户的所有to do，分页查询
     List<ToDo> getTodoWithPagination(Long userId, String sortBy, int size, int page);
 
-    // 新建to do属于当前用户，传入to do不知道user Id, 要通过登录从当前用户token中传入
+    // 权限 - 当前用户
+    // 操作 - 创建属于当前用户的to do
     ToDo createTodo(ToDo todo, Long userId);
 
-    // 删to do之前验证是否是自己的
+
+    // 权限 - 当前用户
+    // 操作 - 删除当前用户指定id的to do
     void deleteTodo(Long id, Long userId);
 
-    // toggle to do之前验证是否是自己的
+    // 权限 - 当前用户
+    // 操作 - 改变当前用户指定id的to do完成状态
     void toggleTodo(Long id, Long userId);
+
 
 }

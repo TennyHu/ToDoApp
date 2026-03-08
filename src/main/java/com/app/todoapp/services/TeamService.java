@@ -6,14 +6,19 @@ import com.app.todoapp.entity.UserTeam;
 
 public interface TeamService {
 
-    // 创建者自动为admin
+    // 权限 - 无
+    // 操作 - 创建团队的用户为admin，@Transactional
     public Team createTeam(String teamName, Long userId);
 
+    // 权限 - 无
+    // 操作 - 通过team id查看team
     public Team getTeamById(Long id);
 
-    // 只有admin可以进行操作
+    // 权限 - admin
+    // 操作 - 更新团队信息
     public void updateTeam(Long teamId, Long userId, Team team);
 
-    // 只有admin可以进行操作
+    // 权限 - admin
+    // 操作 - 解散团队
     public void deleteTeam(Long teamId, Long userId, Team team);
 }

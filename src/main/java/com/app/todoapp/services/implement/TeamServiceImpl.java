@@ -6,6 +6,7 @@ import com.app.todoapp.mapper.TeamMapper;
 import com.app.todoapp.mapper.UserTeamMapper;
 import com.app.todoapp.services.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,11 +27,15 @@ public class TeamServiceImpl implements TeamService {
         Team team = new Team();
         team.setName(teamName);
         team.setCreatedBy(userId);
-        teamMapper.createTeam(team);
+        try {
+            teamMapper.createTeam(team);
+        } catch (DuplicateKeyException e) {
+            throw new RuntimeException("team名已存在");
+        }
 
         UserTeam userTeam = new UserTeam();
         userTeam.setTeamId(team.getId());
-        userTeam.setUserId(team.getCreatedBy());
+        userTeam.setUserId(userId);
         userTeam.setRole("admin");
         userTeamMapper.joinTeam(userTeam);
         return team;
@@ -59,7 +64,7 @@ public class TeamServiceImpl implements TeamService {
     public void deleteTeam(Long teamId, Long userId, Team team) {
         UserTeam userTeam = userTeamMapper.getMember(teamId, userId);
         if (userTeam == null || !userTeam.getRole().equals("admin")) {
-            throw new RuntimeException("无权限更新团队信息");
+            throw new RuntimeException("无权限解散团队");
         }
         teamMapper.deleteTeam(team);
     }

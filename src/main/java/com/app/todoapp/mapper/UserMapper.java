@@ -13,11 +13,14 @@ public interface UserMapper {
             "values (#{username}, #{password}, #{email})")
     public int register(User user);
 
+
     @Select("select * from `user` where username = #{username}")
     User getUserByUsername(String username);
 
+
     @Select("select * from `user` where id = #{userId}")
     User getUserById(Long userId);
+
 
     @Update("update `user` set username = #{username}, password = #{password}, email = #{email} " +
             "where id = #{id}")

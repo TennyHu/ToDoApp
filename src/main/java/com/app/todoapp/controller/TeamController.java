@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/team")
 public class TeamController {
 
-
     private final TeamServiceImpl teamServiceImpl;
 
     @Autowired
@@ -41,12 +40,7 @@ public class TeamController {
     public Result updateTeam(@RequestBody Team team,
                              HttpServletRequest request) {
         Long userId = getUserId(request);
-        if (!team.getId().equals(userId)) {
-            throw new RuntimeException("无权更改团队信息");
-        }
-
         teamServiceImpl.updateTeam(team.getId(), userId, team);
-
         return Result.success();
     }
 
@@ -54,12 +48,7 @@ public class TeamController {
     public Result deleteTeam(@RequestBody Team team,
                              HttpServletRequest request) {
         Long userId = getUserId(request);
-        if (!team.getCreatedBy().equals(userId)) {
-            throw new RuntimeException("无权更改团队信息");
-        }
-
         teamServiceImpl.deleteTeam(team.getId(), userId, team);
-
         return Result.success();
 
     }

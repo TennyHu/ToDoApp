@@ -22,7 +22,7 @@ public class RedisConfig {
         // value: JSON
         JacksonJsonRedisSerializer serializer = new JacksonJsonRedisSerializer<>(Object.class);
         template.setValueSerializer(serializer);
-        template.setHashKeySerializer(serializer);
+        template.setHashValueSerializer(serializer);
         template.afterPropertiesSet();
 
         return template;

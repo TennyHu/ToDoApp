@@ -14,8 +14,10 @@ public interface TeamMapper {
     @Select("select * from `team` where id = #{id}")
     Team getTeamById(Long id);
 
+
     @Update("update `team` set name values #{name}")
     void updateTeam(Team team);
+
 
     @Delete("delete from `team` where name = #{name}")
     public void deleteTeam(Team team);
