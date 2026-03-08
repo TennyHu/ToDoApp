@@ -15,7 +15,7 @@ public interface TeamMapper {
     Team getTeamById(Long id);
 
 
-    @Update("update `team` set name values #{name}")
+    @Update("update `team` set name = #{name} where id = #{id}")
     void updateTeam(Team team);
 
 

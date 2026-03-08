@@ -33,7 +33,7 @@ public interface ToDoMapper {
 
 
 
-    @Update("update `todo` set (completed = not completed) where id = #{id}")
+    @Update("update `todo` set completed = not completed where id = #{id}")
     void toggleTodo(Long id);
 
 

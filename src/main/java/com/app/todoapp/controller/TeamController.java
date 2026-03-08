@@ -5,6 +5,7 @@ import com.app.todoapp.entity.Team;
 import com.app.todoapp.services.implement.TeamServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -12,10 +13,12 @@ import org.springframework.web.bind.annotation.*;
 public class TeamController {
 
     private final TeamServiceImpl teamServiceImpl;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
-    public TeamController(TeamServiceImpl teamServiceImpl) {
+    public TeamController(TeamServiceImpl teamServiceImpl, RedisTemplate<String, Object> redisTemplate) {
         this.teamServiceImpl = teamServiceImpl;
+        this.redisTemplate = redisTemplate;
     }
 
     private Long getUserId(HttpServletRequest request) {
@@ -36,7 +39,7 @@ public class TeamController {
         return Result.success(team);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping()
     public Result updateTeam(@RequestBody Team team,
                              HttpServletRequest request) {
         Long userId = getUserId(request);
